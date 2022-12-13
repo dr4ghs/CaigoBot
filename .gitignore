@@ -1,0 +1,8 @@
+**/*/go.sum
+
+**/*/*.exe
+**/*/*.test
+**/*/*.out
+
+# VS Code
+CaigoBot.code-workspace
