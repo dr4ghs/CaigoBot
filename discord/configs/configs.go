@@ -1,40 +1,66 @@
 package configs
 
 import (
-	"flag"
+	"log"
 	"os"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/kelseyhightower/envconfig"
+	"gopkg.in/yaml.v2"
 )
+
+// BotConfig structs that represents the service configs
+type BotConfig struct {
+	BotToken      string `yaml:"bot_token" envconfig:"DISCORD_BOT_TOKEN"`
+	RemoveCommand bool   `yaml:"rm_cmd"`
+	Intents       int    `yaml:"intents"`
+	Guilds        []struct {
+		ID       string   `yaml:"id"`
+		Commands []string `yaml:"commands"`
+	} `yaml:"guilds"`
+}
 
 const (
-	// Discord bot token environment variable name
-	BOT_TOKEN_VAR_NAME = "CAIGOBOT_TOKEN"
+	// Config file path environment variable name
+	CONFIG_FILE_PATH_VAR_ENV = "CONFIG_FILE_PATH"
 
-	// Discord guild ID environment variable name
-	DISCORD_GUILD_ID_VAR_NAME = "DISCORD_GUILD_ID"
+	// Default config file path
+	DEFAULT_CONFIG_FILE_PATH = "config.yml"
 )
 
-var (
-	// Discord bot intents
-	Intents []discordgo.Intent = []discordgo.Intent{
-		discordgo.IntentGuildMessages,
-		discordgo.IntentDirectMessages,
-	}
-
-	// Discord bot connection token
-	Token string
-
-	// Discord guild ID
-	GuildID string
-
-	// Discord bot command flags
-	RemoveCommand bool
-)
+// Config instance
+var Config *BotConfig
 
 func init() {
-	flag.StringVar(&Token, "token", os.Getenv(BOT_TOKEN_VAR_NAME), "Bot token")
-	flag.StringVar(&GuildID, "guild_id", os.Getenv(DISCORD_GUILD_ID_VAR_NAME), "ID of the Discord guild")
-	flag.BoolVar(&RemoveCommand, "rmcmd", true, "Remove all commands after shutting or not")
-	flag.Parse()
+	Config = &BotConfig{}
+
+	readFile(Config)
+	readEnv(Config)
+}
+
+// readFile reads the config YAML file and populate the Config variable
+func readFile(c *BotConfig) {
+	configFilePath := os.Getenv(CONFIG_FILE_PATH_VAR_ENV)
+	if len(configFilePath) == 0 {
+		configFilePath = DEFAULT_CONFIG_FILE_PATH
+	}
+
+	file, err := os.Open(configFilePath)
+	if err != nil {
+		log.Fatalf("Cannot open config file: %v", err)
+	}
+	defer file.Close()
+
+	decoder := yaml.NewDecoder(file)
+	err = decoder.Decode(c)
+	if err != nil {
+		log.Fatalf("Error while decoding config file: %v", err)
+	}
+}
+
+// readEnv parses the environment variables
+func readEnv(c *BotConfig) {
+	err := envconfig.Process("", c)
+	if err != nil {
+		log.Fatalf("Cannot process environment variables: %v", err)
+	}
 }

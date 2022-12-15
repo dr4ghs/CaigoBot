@@ -1,0 +1,7 @@
+bot_token: my_bot_token
+rm_cmd: true
+intents: 0
+guilds:
+  - id: "123456789"
+    commands:
+      - greets
