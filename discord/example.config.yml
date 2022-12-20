@@ -1,7 +1,7 @@
-bot_token: my_bot_token
+bot_token: ${DISCORD_BOT_TOKEN}
 rm_cmd: true
 intents: 0
 guilds:
-  - id: "123456789"
+  - id: ${DEFAULT_GUILD_ID}
     commands:
       - greets
