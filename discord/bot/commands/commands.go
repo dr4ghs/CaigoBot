@@ -3,13 +3,22 @@ package commands
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/dr4ghs/caigobot-discord/bot"
-	cfg "github.com/dr4ghs/caigobot-discord/configs"
+)
+
+const (
+	REMOVE_CMD_VAR_NAME = "REMOVE_CMD"
 )
 
 var (
+	// Indicates if the bot has to remove all registered command of
+	// a guild before closing.
+	RemoveCommandsCfg = false
+
 	// Commands registered for every guild
 	registeredCommands map[string][]*discordgo.ApplicationCommand
 
@@ -28,6 +37,13 @@ var (
 )
 
 func init() {
+	rm_cmd, err := strconv.ParseBool(os.Getenv(REMOVE_CMD_VAR_NAME))
+	if err != nil {
+		log.Printf("Cannot parse variable '%s', using default value 'false'", REMOVE_CMD_VAR_NAME)
+	} else {
+		RemoveCommandsCfg = rm_cmd
+	}
+
 	bot.Session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := handlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
@@ -39,7 +55,7 @@ func init() {
 
 // RegisterCommands registers a list of commands for every specified guild
 func RegisterCommands(s *discordgo.Session) {
-	for _, guild := range cfg.Config.Guilds {
+	for _, guild := range bot.Guilds {
 		fmt.Printf("Registering bot commands for guild %s...\n", guild.ID)
 		registeredCommands[guild.ID] = make([]*discordgo.ApplicationCommand, len(commands))
 
@@ -60,7 +76,7 @@ func RegisterCommands(s *discordgo.Session) {
 
 // RemoveCommands removes all registered commands for every specified guild
 func RemoveCommands(s *discordgo.Session) {
-	for _, guild := range cfg.Config.Guilds {
+	for _, guild := range bot.Guilds {
 		fmt.Printf("Deleting bot commands for guild %s...\n", guild.ID)
 
 		for _, cmd := range registeredCommands[guild.ID] {

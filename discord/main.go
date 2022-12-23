@@ -9,7 +9,6 @@ import (
 
 	"github.com/dr4ghs/caigobot-discord/bot"
 	"github.com/dr4ghs/caigobot-discord/bot/commands"
-	cfg "github.com/dr4ghs/caigobot-discord/configs"
 )
 
 func main() {
@@ -25,7 +24,7 @@ func main() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
 
-	if cfg.Config.RemoveCommand {
+	if commands.RemoveCommandsCfg {
 		commands.RemoveCommands(bot.Session)
 	}
 

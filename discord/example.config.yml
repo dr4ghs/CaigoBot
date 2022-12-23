@@ -1,7 +1,0 @@
-bot_token: ${DISCORD_BOT_TOKEN}
-rm_cmd: true
-intents: 0
-guilds:
-  - id: ${DEFAULT_GUILD_ID}
-    commands:
-      - greets
