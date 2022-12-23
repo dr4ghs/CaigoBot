@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  caigobot-discord:
+    container_name: caigobot-discord
+    build: ./discord
+    ports:
+      - 8080:8080
+    env_file:
+      - ./discord/.env
+    restart: always
