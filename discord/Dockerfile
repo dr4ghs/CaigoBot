@@ -9,6 +9,8 @@ RUN go mod download
 
 COPY *.go ./
 COPY bot/ ./bot/
+COPY commands/ ./commands/
+COPY utils/ ./utils/
 
 RUN go build -o caigobot-discord
 

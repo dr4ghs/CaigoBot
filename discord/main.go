@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/dr4ghs/caigobot-discord/bot"
-	"github.com/dr4ghs/caigobot-discord/bot/commands"
+	"github.com/dr4ghs/caigobot-discord/commands"
 )
 
 func main() {

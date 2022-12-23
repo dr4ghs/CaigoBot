@@ -38,5 +38,10 @@ func init() {
 		botIntents = int(intents)
 	}
 
-	Session.Identify.Intents = discordgo.Intent(botIntents)
+	Session.Identify.Intents = discordgo.IntentsAllWithoutPrivileged //discordgo.Intent(botIntents)
+	Session.Identify.Presence = discordgo.GatewayStatusUpdate{
+		Game: discordgo.Activity{
+			Name: "/help",
+		},
+	}
 }
