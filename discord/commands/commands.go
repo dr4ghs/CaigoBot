@@ -8,6 +8,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/dr4ghs/caigobot-discord/bot"
+	"github.com/dr4ghs/caigobot-discord/commands/help"
 	"github.com/dr4ghs/caigobot-discord/commands/join"
 )
 
@@ -26,18 +27,13 @@ var (
 	// All avaiable commands
 	Commands = map[string]*discordgo.ApplicationCommand{
 		"join": join.Command,
+		"help": help.Command,
 	}
 
 	// All avaiable command handlers
 	CmdHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){}
 
 	CompHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){}
-
-	guildCommands = map[string][]string{
-		"656203337955541031": {
-			"join",
-		},
-	}
 )
 
 func init() {
@@ -48,12 +44,16 @@ func init() {
 		RemoveCommandsCfg = rm_cmd
 	}
 
-	for k, _ := range Commands {
+	for k := range Commands {
 		switch k {
 		case "join":
 			join.Activate(CmdHandlers, CompHandlers)
+		case "help":
+			help.Activate(CmdHandlers, CompHandlers)
 		}
 	}
+
+	CompHandlers["delete"] = deleteMessageHandler
 
 	bot.Session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		switch i.Type {
@@ -105,4 +105,8 @@ func RemoveCommands(s *discordgo.Session) {
 
 		fmt.Println("OK!")
 	}
+}
+
+func deleteMessageHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.ChannelMessageDelete(i.ChannelID, i.Message.ID)
 }

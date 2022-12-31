@@ -23,6 +23,7 @@ var (
 		CommandChannelID: "1045645143371423807",
 		Commands: []string{
 			"join",
+			"help",
 		},
 	}
 )
