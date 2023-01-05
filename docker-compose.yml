@@ -9,3 +9,16 @@ services:
     env_file:
       - ./discord/.env
     restart: always
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    restart: always
